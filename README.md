@@ -333,7 +333,7 @@ daily_revenue = daily_revenue.asfreq("D").fillna(0)
  
 5. Step 5: EDA, forecasting (train/test, baseline, SARIMAX), charts, evaluate. Export charts to charts/ for slides.
 - Daily revenue over time
-   Use code below:
+Use code below:
 ```code
 daily_revenue = (
     items_with_date
@@ -351,7 +351,7 @@ plt.tight_layout()
 plt.show()
 ```
 - Rolling mean
-   Use code below:
+Use code below:
 ```code
 plt.figure(figsize=(14,5))
 plt.plot(daily_revenue.index, daily_revenue.rolling(7).mean(), label="7-day MA")
@@ -362,7 +362,14 @@ plt.tight_layout()
 plt.show()
 ```
 Result:
-<img width="640" height="427" alt="image" src="file:///D:/Swiss%20Coding%20Academy/Daily%20revenue%20Over%20Time%20and%20Rolling%20Average%20Revenue.png" />\
+<img width="1389" height="490" alt="Daily revenue Over Time and Rolling Average Revenue" src="https://github.com/user-attachments/assets/0dc7a18d-6e1c-4952-bd35-57d92c7deb22" />
+
+Assessment:
+
+Doanh thu theo ngày biến động mạnh, thể hiện hành vi mua hàng không đều.
+Xu hướng tổng thể tăng nhẹ theo thời gian, thể hiện tăng trưởng tự nhiên của nền tảng.
+Một số spike lớn có thể liên quan đến flash sale hoặc chiến dịch marketing.
+Rolling 7-day và 30-day cho thấy xu hướng tăng ổn định, không có dấu hiệu suy giảm dài hạn.
 
 7. Step 6: Recommendations and summary.
 
