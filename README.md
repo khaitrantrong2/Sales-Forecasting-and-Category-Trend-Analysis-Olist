@@ -17,7 +17,7 @@ Repository layout
 - Open the notebook in Colab.
 - Install dependencies
 Use code below:
-```code
+```python
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,13 +27,13 @@ import numpy as np
 - Find dataset - Example: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce?resource=download
 - Use 9 files download from Kaggle and upload the downloaded CSV files from the dataset.
 Use code below:
-```code
+```python
 from google.colab import files
 uploaded = files.upload()
 ```
 - Read data:
 Use code below:
-```code
+```python
 customers = pd.read_csv('olist_customers_dataset.csv')
 geolocation = pd.read_csv('olist_geolocation_dataset.csv')
 order_items = pd.read_csv('olist_order_items_dataset.csv')
@@ -47,12 +47,12 @@ product_category = pd.read_csv('product_category_name_translation.csv')
 3. Data exploration
 - To see sample of each source (replicate 9 times for 9 files)
 Use code below:
-```code
+```python
 geolocation.head()
 ```
 - To check data type of each source (replicate 9 times for 9 files)
 Use code below:
-```code
+```python
 geolocation.info()
 ```
 - Result:
@@ -89,7 +89,7 @@ customers["customer_state"]
 customers["customer_zip_code_prefix"] 
 
 Use code below:
-```code
+```python
 geolocation["geolocation_city"] = geolocation["geolocation_city"].astype("string")
 geolocation["geolocation_state"] = geolocation["geolocation_state"].astype("string")
 geolocation["geolocation_zip_code_prefix"] = geolocation["geolocation_zip_code_prefix"].astype("string")
@@ -129,7 +129,7 @@ orders["order_delivered_customer_date"]
 orders["order_estimated_delivery_date"]
 
 Use code below:
-```code
+```python
 order_items["shipping_limit_date"] = pd.to_datetime(order_items["shipping_limit_date"], errors="coerce")
 order_reviews["review_answer_timestamp"] = pd.to_datetime(order_reviews["review_answer_timestamp"], errors="coerce")
 orders["order_purchase_timestamp"] = pd.to_datetime(orders["order_purchase_timestamp"], errors="coerce")
@@ -144,7 +144,7 @@ order_items["price"]
 order_items["freight_value"]
 
 Use code below:
-```code
+```python
 order_payments["payment_value"] = pd.to_numeric(order_payments["payment_value"], errors="coerce")
 order_items["price"] = pd.to_numeric(order_items["price"], errors="coerce")
 order_items["freight_value"] = pd.to_numeric(order_items["freight_value"], errors="coerce")
@@ -294,23 +294,23 @@ memory usage: 3.8 MB
 
 - Create order_items + category + date
 Merge order_items and products to have category use code below:
-```code
+```python
 items_cat = order_items.merge(
     products2[["product_id", "product_category_name_english"]],
     on="product_id",
     how="left")
 ```
 Extract purchase date from orders use code below:
-```code
+```python
 orders_clean = orders[["order_id", "order_purchase_timestamp", "order_status"]].copy()
 orders_clean = orders_clean.rename(columns={"order_purchase_timestamp": "order_date"})
 ```
 Filter delivered orders use code below:
-```code
+```python
 orders_clean = orders_clean[orders_clean["order_status"] == "delivered"]
 ```
 Merge date into items use code below:
-```code
+```python
 items_with_date = items_cat.merge(
     orders_clean[["order_id", "order_date"]],
     on="order_id",
@@ -321,7 +321,7 @@ items_with_date["order_date"] = pd.to_datetime(items_with_date["order_date"])
 ```
 - Create daily revenue (base for forecast)
 Use code below:
-```code
+```python
 items_with_date["revenue"] = items_with_date["price"] + items_with_date["freight_value"]
 daily_revenue = (
     items_with_date
@@ -334,7 +334,7 @@ daily_revenue = daily_revenue.asfreq("D").fillna(0)
 5. Step 5: EDA, forecasting (train/test, baseline, SARIMAX), charts, evaluate. Export charts to charts/ for slides.
 - Daily revenue over time
 Use code below:
-```code
+```python
 daily_revenue = (
     items_with_date
     .groupby("order_date")["revenue"]
@@ -352,7 +352,7 @@ plt.show()
 ```
 - Rolling mean
 Use code below:
-```code
+```python
 plt.figure(figsize=(14,5))
 plt.plot(daily_revenue.index, daily_revenue.rolling(7).mean(), label="7-day MA")
 plt.plot(daily_revenue.index, daily_revenue.rolling(30).mean(), label="30-day MA")
