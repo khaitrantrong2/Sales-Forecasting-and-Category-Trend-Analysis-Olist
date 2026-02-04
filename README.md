@@ -15,16 +15,18 @@ Dataset
 - Source: Olist Brazilian E‑commerce public dataset - https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 - Key tables used:
 
-|  |  | 
-| orders |  | 
-| order_items |  | 
-| products |  | 
-| order_reviews |  | 
-| order_payments |  | 
-| customers |  | 
-| sellers |  | 
-| geolocation |  | 
-| product_category_name_translation |  | 
+| Table | Purpose |
+|---|---|
+| orders | Order-level info (status & timestamps) |
+| order_items | Item lines, price & freight |
+| products | Product attributes & category |
+| order_reviews | Review score & comments |
+| order_payments | Payment type & value |
+| customers | Customer location (city/state) |
+| sellers | Seller location (city/state) |
+| geolocation | Zip code → lat/long mapping |
+| product_category_name_translation | PT → EN category mapping |
+
 
 Repository layout
 - Google collab notebook - main Colab notebook: data prep, EDA, forecasting, recommendations - https://colab.research.google.com/drive/1cm-cTILbDeIh0K9k-TdQh3sh1EGSprYx#scrollTo=o1sxtUIl6KTB
@@ -50,6 +52,7 @@ Step 2: Load and read data.
 - Find dataset - Example: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce?resource=download
 
 - Use 9 files download from Kaggle and upload the downloaded CSV files from the dataset.
+
 Use code below:
 ```python
 from google.colab import files
