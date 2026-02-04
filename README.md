@@ -10,7 +10,7 @@ The goal is to support high‑level inventory and marketing planning using histo
 - Build a 60‑day revenue forecast using time‑series modeling
 - Provide high‑level inventory & marketing recommendations
 
-**## 2. Dataset and repository structure**
+## 2. Dataset and repository structure
 Dataset
 - Source: Olist Brazilian E‑commerce public dataset - https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 - Key tables used:
@@ -33,7 +33,7 @@ Repository layout
 - data/ - raw CSV files.
 - README.md - this file.
 
-**## 3. Data Preparation**
+## 3. Data Preparation
 The notebook performs:
 Step 1: Set-up and Install dependencies
 - Open the notebook in Colab.
@@ -291,7 +291,7 @@ Result:
 Except order_reviews shown duplicate result - np.int64(814), acceptable as review bundle cases.  
 The rest shown no duplicate - np.int64(0)
 
-**## 4. Feature engineering**
+## 4. Feature engineering
 - Merged product categories (Portuguese → English)
 
 Use code below:
@@ -373,7 +373,7 @@ Data quality guaranteed for final cleaned datasets:
 - Verified joins did not create many-to-many “row explosions” by comparing row counts before vs after merges.
 - Confirmed the aggregated daily time series has no duplicate dates, no missing revenue, and no negative values after reindexing to a full daily calendar.
 
-**## 5. Exploratory Data Analysis (EDA).**
+## 5. Exploratory Data Analysis (EDA)
 **Modeling Approach**
 - Aggregated daily/monthly/weekly revenue
 - Category Contribution Analysis & Related factors impact (Review score & Delivery time)
@@ -655,7 +655,7 @@ Recommendation:
   + Capacity planning for warehouse and delivery based on baseline demand.
 - For upcoming campaigns, use scenario planning (Base / Promo / Peak) instead of relying on a single forecast line.
 
-**## 6. Conclusion**
+## 6. Conclusion
 
 **Inventory**
 - Increase stock 10–20% for top categories before Q4
@@ -673,7 +673,7 @@ Recommendation:
 - Prioritize sellers with faster lead times
 - Consider fulfillment centers closer to customer cluster
 
-**## 7. Limitations & Future Work**
+## 7. Limitations & Future Work
 
 **Limitations:**
 - Data timeframe (2016–2018): findings may not reflect current market behavior, pricing, competition, or platform dynamics.
@@ -693,7 +693,7 @@ Recommendation:
 - Customer & cohort insights (optional): segment customers by frequency/value and evaluate retention impact from delivery performance and review outcomes.
 - Apply time-series cross-validation to reduce bias from a single train–test split and to better assess model stability across different forecast windows (e.g., 7/14/30/60 days).
 
-**## 8. Tools & Libraries**
+## 8. Tools & Libraries
 - pandas
 - numpy
 - matplotlib
