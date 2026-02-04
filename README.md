@@ -58,7 +58,7 @@ geolocation.info()
 - Result:
 
 Below field need to convert to string for consistency and prevent errors when join or calculate:
-geolocation["geolocation_city"]
+```geolocation["geolocation_city"]
 geolocation["geolocation_state"] 
 geolocation["geolocation_zip_code_prefix"] 
 order_items["order_id"] 
@@ -87,6 +87,7 @@ customers["customer_unique_id"]
 customers["customer_city"] 
 customers["customer_state"]
 customers["customer_zip_code_prefix"] 
+```
 
 Use code below:
 ```python
@@ -120,13 +121,14 @@ customers["customer_state"] = customers["customer_state"].astype("string")
 customers["customer_zip_code_prefix"] = customers["customer_zip_code_prefix"].astype("string")
 ```
 Below fields need to convert to date time for date series:
-order_items["shipping_limit_date"]
+```order_items["shipping_limit_date"]
 order_reviews["review_answer_timestamp"]
 orders["order_purchase_timestamp"]
 orders["order_approved_at"]
 orders["order_delivered_carrier_date"]
 orders["order_delivered_customer_date"]
 orders["order_estimated_delivery_date"]
+```
 
 Use code below:
 ```python
