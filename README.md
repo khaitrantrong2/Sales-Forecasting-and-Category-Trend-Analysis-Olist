@@ -35,6 +35,7 @@ Repository layout
 
 ## 3. Data Preparation
 The notebook performs:
+
 Step 1: Set-up and Install dependencies
 - Open the notebook in Colab.
 - Install dependencies
