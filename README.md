@@ -1,19 +1,41 @@
 ## Sales-Forecasting-and-Category-Trend-Analysis-Olist
-A 60‑day forecast, and high‑level inventory and marketing recommendations.
-## Dataset and repository structure
+This project analyzes the Olist Brazilian E‑commerce dataset to explore sales trends, customer behavior, product categories, and to build a short‑term sales forecast.
+The goal is to support high‑level inventory and marketing planning using historical data.
+
+**#1. Project Objectives**
+- Clean and prepare the Olist dataset for analysis
+- Explore sales patterns (daily, weekly, monthly)
+- Identify top‑performing product categories
+- Analyze customer reviews and delivery performance
+- Build a 60‑day revenue forecast using time‑series modeling
+- Provide high‑level inventory & marketing recommendations
+
+**##2. Dataset and repository structure**
 Dataset
-- Source: Olist Brazilian E‑commerce public dataset (Kaggle).
-- Key tables used: orders, order_items, products, order_reviews, order_payments, sellers, geolocation, product_category_name_translation, customers.
+- Source: Olist Brazilian E‑commerce public dataset - https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+- Key tables used:
+
+|  |  | 
+| orders |  | 
+| order_items |  | 
+| products |  | 
+| order_reviews |  | 
+| order_payments |  | 
+| customers |  | 
+| sellers |  | 
+| geolocation |  | 
+| product_category_name_translation |  | 
+
 Repository layout
 - Google collab notebook - main Colab notebook: data prep, EDA, forecasting, recommendations - https://colab.research.google.com/drive/1cm-cTILbDeIh0K9k-TdQh3sh1EGSprYx#scrollTo=o1sxtUIl6KTB
 - charts/ - exported PNG charts used in slides (daily_revenue.png; rolling_ma.png; monthly_revenue.png; weekday_revenue.png; top_categories.png; delivery_vs_review.png; forecast_60day.png).
 - slides/ - presentation file and exported PDF.
 - data/ - raw CSV files.
 - README.md - this file.
-  
-## How to run and execute notebook analysis in Colab
 
-1. Step 1: Set-up and Install dependencies
+**##3. Data Preparation**
+The notebook performs:
+Step 1: Set-up and Install dependencies
 - Open the notebook in Colab.
 - Install dependencies
 Use code below:
@@ -22,15 +44,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 ```
-2. Step 2: Load and read data.
+Step 2: Load and read data.
 
 - Find dataset - Example: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce?resource=download
+
 - Use 9 files download from Kaggle and upload the downloaded CSV files from the dataset.
 Use code below:
 ```python
 from google.colab import files
 uploaded = files.upload()
 ```
+
 - Read data:
 Use code below:
 ```python
@@ -44,7 +68,8 @@ products = pd.read_csv('olist_products_dataset.csv')
 sellers = pd.read_csv('olist_sellers_dataset.csv')
 product_category = pd.read_csv('product_category_name_translation.csv')
 ```
-3. Data exploration
+Step 3: Data type standardization
+
 - To see sample of each source (replicate 9 times for 9 files)
 Use code below:
 ```python
@@ -55,41 +80,13 @@ Use code below:
 ```python
 geolocation.info()
 ```
+Converted:
+- IDs → string
+- Dates → datetime
+- Prices & freight → numeric
+
 - Result:
-
-Below field need to convert to string for consistency and prevent errors when join or calculate:
-```geolocation["geolocation_city"]
-geolocation["geolocation_state"] 
-geolocation["geolocation_zip_code_prefix"] 
-order_items["order_id"] 
-order_items["product_id"] 
-order_items["seller_id"] 
-order_payments["order_id"] 
-order_payments["payment_type"] 
-order_reviews["review_id"]
-order_reviews["order_id"] 
-order_reviews["review_comment_title"] 
-order_reviews["review_comment_message"] 
-order_reviews["review_creation_date"]
-orders["order_id"] 
-orders["customer_id"] 
-orders["order_status"] 
-products["product_id"] 
-products["product_category_name"] 
-sellers["seller_id"] 
-sellers["seller_city"] 
-sellers["seller_state"]
-sellers["seller_zip_code_prefix"]
-product_category["product_category_name"] 
-product_category["product_category_name_english"] 
-customers["customer_id"] 
-customers["customer_unique_id"] 
-customers["customer_city"] 
-customers["customer_state"]
-customers["customer_zip_code_prefix"] 
-```
-
-Use code below:
+Use code below for string convert:
 ```python
 geolocation["geolocation_city"] = geolocation["geolocation_city"].astype("string")
 geolocation["geolocation_state"] = geolocation["geolocation_state"].astype("string")
@@ -120,17 +117,7 @@ customers["customer_city"] = customers["customer_city"].astype("string")
 customers["customer_state"] = customers["customer_state"].astype("string")
 customers["customer_zip_code_prefix"] = customers["customer_zip_code_prefix"].astype("string")
 ```
-Below fields need to convert to date time for date series:
-```order_items["shipping_limit_date"]
-order_reviews["review_answer_timestamp"]
-orders["order_purchase_timestamp"]
-orders["order_approved_at"]
-orders["order_delivered_carrier_date"]
-orders["order_delivered_customer_date"]
-orders["order_estimated_delivery_date"]
-```
-
-Use code below:
+Use code below for datetime convert:
 ```python
 order_items["shipping_limit_date"] = pd.to_datetime(order_items["shipping_limit_date"], errors="coerce")
 order_reviews["review_answer_timestamp"] = pd.to_datetime(order_reviews["review_answer_timestamp"], errors="coerce")
@@ -140,12 +127,7 @@ orders["order_delivered_carrier_date"] = pd.to_datetime(orders["order_delivered_
 orders["order_delivered_customer_date"] = pd.to_datetime(orders["order_delivered_customer_date"], errors="coerce")
 orders["order_estimated_delivery_date"] = pd.to_datetime(orders["order_estimated_delivery_date"], errors="coerce")
 ```
-Below fields need to convert to numuric for calculation:
-order_payments["payment_value"]
-order_items["price"]
-order_items["freight_value"]
-
-Use code below:
+Use code below for numeric convert:
 ```python
 order_payments["payment_value"] = pd.to_numeric(order_payments["payment_value"], errors="coerce")
 order_items["price"] = pd.to_numeric(order_items["price"], errors="coerce")
@@ -291,8 +273,41 @@ Data columns (total 5 columns):
 dtypes: string(5)
 memory usage: 3.8 MB
 
-4. Step 4: Feature engineering.
-- Join product category name
+Data valid guaranteed:
+- IDs → must be unique
+
+Use code below for numeric convert:
+```python
+orders.duplicated("order_id").sum()
+order_items.duplicated(["order_id","order_item_id"]).sum()
+order_payments.duplicated(["order_id","payment_sequential"]).sum()
+order_reviews.duplicated("review_id").sum()
+products.duplicated("product_id").sum()
+customers.duplicated("customer_id").sum()
+sellers.duplicated("seller_id").sum()
+product_category.duplicated("product_category_name").sum()
+```
+Result:
+Except order_reviews shown duplicate result - np.int64(814), acceptable as review bundle cases.  
+The rest shown no duplicate - np.int64(0)
+
+**##4. Feature engineering**
+- Merged product categories (Portuguese → English)
+
+Use code below:
+```python
+products2 = products.merge(
+    product_category,
+    on="product_category_name",
+    how="left")
+```
+- Check increase row after merge
+  
+```python
+len(order_items), len(items_cat), len(items_with_date)
+```
+Result:
+(112650, 112650, 110197)
 
 - Create order_items + category + date
 Merge order_items and products to have category use code below:
@@ -321,6 +336,14 @@ items_with_date = items_cat.merge(
 items_with_date["order_date"] = items_with_date["order_date"].dt.date
 items_with_date["order_date"] = pd.to_datetime(items_with_date["order_date"])
 ```
+Check increase row after merge:
+
+```python
+len(order_items), len(items_cat), len(items_with_date)
+```
+Result:
+(112650, 112650, 110197)
+
 - Create daily revenue (base for forecast)
 Use code below:
 ```python
@@ -332,9 +355,34 @@ daily_revenue = (
     .sort_index())
 daily_revenue = daily_revenue.asfreq("D").fillna(0)
 ```
- 
-5. Step 5: EDA, forecasting (train/test, baseline, SARIMAX), charts, evaluate. Export charts to charts/ for slides.
-- Daily revenue over time
+```python
+daily_revenue.index.duplicated().sum()
+```
+Result:
+np.int64(0)
+
+Check increase row after merge:
+
+```python
+len(order_items), len(items_cat), len(items_with_date)
+```
+Result:
+(112650, 112650, 110197)
+
+Data quality guaranteed for final cleaned datasets:
+- Verified joins did not create many-to-many “row explosions” by comparing row counts before vs after merges.
+- Confirmed the aggregated daily time series has no duplicate dates, no missing revenue, and no negative values after reindexing to a full daily calendar.
+
+**##5. Exploratory Data Analysis (EDA).**
+**Modeling Approach**
+- Aggregated daily/monthly/weekly revenue
+- Category Contribution Analysis & Related factors impact (Review score & Delivery time)
+- Train/test split: last 60 days as test
+- Baseline model: Naive (last value)
+- Time-series model: SARIMA (weekly seasonality)
+- Evaluation metric: MAPE
+
+5.1 Daily revenue over time
 Use code below:
 ```python
 daily_revenue = (
@@ -364,59 +412,288 @@ plt.tight_layout()
 plt.show()
 ```
 Result:
-<img width="1389" height="490" alt="Daily revenue Over Time and Rolling Average Revenue" src="https://github.com/user-attachments/assets/0dc7a18d-6e1c-4952-bd35-57d92c7deb22" />
+<img width="1389" height="490" alt="Rolling Average Revenue" src="https://github.com/user-attachments/assets/e42097b1-e89c-4c54-9784-11ac990e47df" />
+<img width="1389" height="490" alt="Daily revenue Over Time" src="https://github.com/user-attachments/assets/ced9fc01-f04e-49fb-8adb-9d507ef39612" />
 
 Assessment:
+- Daily revenue is highly volatile, suggesting demand is not evenly distributed across days.
+- There is a significant spike, which may be driven by a special event such as a flash sale or a marketing campaign.
+- The 7-day and 30-day moving averages indicate an overall upward trend and then a more stable level afterward.
 
-Doanh thu theo ngày biến động mạnh, thể hiện hành vi mua hàng không đều.
-Xu hướng tổng thể tăng nhẹ theo thời gian, thể hiện tăng trưởng tự nhiên của nền tảng.
-Một số spike lớn có thể liên quan đến flash sale hoặc chiến dịch marketing.
-Rolling 7-day và 30-day cho thấy xu hướng tăng ổn định, không có dấu hiệu suy giảm dài hạn.
+Recommendation:
+- Use moving averages (7D/30D) as planning signals for inventory buffer and fulfillment capacity.
+- Flag extreme spike days for root-cause analysis (campaign, promotion, operational issues) and treat them separately in forecasting.
 
-7. Step 6: Recommendations and summary.
+5.2 Revenue by month
+Use code below:
+```python
+monthly_revenue = daily_revenue.resample("ME").sum()
 
-8. Step 7: Conclusion
+plt.figure(figsize=(12,5))
+plt.plot(monthly_revenue.index, monthly_revenue.values, marker="o")
+plt.title("Monthly Revenue Trend")
+plt.xlabel("Month")
+plt.ylabel("Revenue")
+plt.tight_layout()
+plt.show()
+```
+Result:
+<img width="1189" height="490" alt="Monthly Revenue Trend" src="https://github.com/user-attachments/assets/ec67390e-e8d7-4ff6-ab5d-6222f2d1e410" />
 
+Assessment:
+- Revenue increases strongly toward year-end (Q4), especially in November–December.
+- The months after the peak (e.g., January–February) tend to be lower, consistent with post-holiday demand normalization.
+- Overall, the platform shows growth over time with seasonal fluctuations.
 
-9. Step 8: Limitations & Future Work.
+Recommendation:
+- Build a seasonal inventory and marketing plan: ramp up ahead of Q4 and reduce inventory after the peak to avoid dead stock.
+- Pre-book fulfillment capacity and logistics resources before major shopping events (e.g., Black Friday, Christmas, YE flash-sales).
 
-#Save outputs
-- Export charts as PNG using plt.savefig("charts/filename.png", dpi=150, bbox_inches="tight").
-- Export the final notebook as PDF.
+5.3 Weekly Seasonality
+Use code below:
+```python
+import seaborn as sns
+items_with_date["weekday"] = items_with_date["order_date"].dt.day_name()
 
-Deliverables
-1. Notebook: Full Colab notebook with code and narrative
-2. Charts: Daily revenue, rolling MA, monthly trend, weekday pattern, top categories, delivery vs review, 60‑day forecast
-3. Presentation slide with forecast + insight + recommendation, ready for export to PDF
-4. Final report summarizing purpose, methodologies, findings and recommendations
-5. Detailed explanations in Readme.md
+weekday_rev = (
+    items_with_date
+    .groupby("weekday")["revenue"]
+    .sum()
+    .reindex(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]))
 
-Results summary and recommended actions
-Findings
-- Platform revenue shows a mild upward trend with high daily volatility.
-- Strong seasonal peak in Q4 (Nov–Dec).
-- Weekly peak on Tuesday and Wednesday.
-- Top 5 categories contribute the majority of revenue; long tail contributes little.
-- Longer delivery times correlate with lower review scores.
-High‑level recommendations
-- Increase stock for top categories by 10–20% ahead of Q4.
-- Use make‑to‑order or minimal stock for long‑tail categories.
-- Align replenishment to prepare inventory before Tue–Wed peaks.
-- Prioritize fulfillment from warehouses closer to demand centers to reduce lead time.
-- Focus marketing spend in Q4 and early week to maximize conversion.
+plt.figure(figsize=(10,5))
+sns.barplot(x=weekday_rev.index, y=weekday_rev.values)
+plt.title("Revenue by Day of Week")
+plt.xlabel("Day")
+plt.ylabel("Revenue")
+plt.tight_layout()
+plt.show()
+```
+Result:
+<img width="989" height="490" alt="Revenue by Day of Week" src="https://github.com/user-attachments/assets/6bad57d3-396c-49dd-8623-314d86b5edb3" />
 
-Notes, limitations, and next steps
-Limitations
-- Dataset covers historical years (2016–2018); results are historical and may not reflect current market conditions.
-- SARIMAX is used as a baseline; more advanced models (Prophet, XGBoost, LightGBM) may improve accuracy.
-- Inventory recommendations are high level and do not include safety stock or reorder point calculations.
-Next steps
-- Refit models at category level and compare Prophet/ML models.
-- Build a lightweight dashboard to monitor daily actuals vs forecast and seller lead times.
-- Add seller‑level SLA monitoring and alerts to reduce delivery delays.
+Assessment:
+- Revenue is generally higher on weekdays, especially early week-day and lower on weekends.
+- This suggests customer purchasing behavior is more active during working days.
 
-Requirements
-Minimum packages
+Recommendation:
+- Concentrate marketing spend and promotions on peak weekdays to maximize conversion efficiency.
+- Align operational staffing (picking/packing/support) with early weekday demand patterns.
+
+5.4 Category Contribution Analysis
+Use code below:
+```python
+cat_revenue = (
+    items_with_date
+    .groupby("product_category_name_english")["revenue"]
+    .sum()
+    .sort_values(ascending=False)
+    .head(15))
+
+plt.figure(figsize=(10,6))
+sns.barplot(y=cat_revenue.index, x=cat_revenue.values)
+plt.title("Top 15 Categories by Revenue")
+plt.xlabel("Revenue")
+plt.ylabel("Category")
+plt.tight_layout()
+plt.show()
+```
+
+Result:
+<img width="990" height="590" alt="Top 15 Categories by Revenue" src="https://github.com/user-attachments/assets/62cc880c-971f-4314-8563-6742d8b7cca5" />
+
+Calculate ad-hoc information of % Top sales contribution total revenue:
+Use code below:
+```python
+total_rev = items_with_date["revenue"].sum()
+
+top5_rev = (
+    items_with_date.groupby("product_category_name_english")["revenue"]
+    .sum()
+    .sort_values(ascending=False)
+    .head(5)
+    .sum())
+
+top5_share = top5_rev / total_rev * 100
+print("Top 5 share (%):", top5_share)
+
+total_rev = items_with_date["revenue"].sum()
+
+top15_rev = (
+    items_with_date.groupby("product_category_name_english")["revenue"]
+    .sum()
+    .sort_values(ascending=False)
+    .head(15)
+    .sum())
+
+top15_share = top15_rev / total_rev * 100
+print("Top 15 share (%):", top15_share)
+```
+
+Assessment:
+- Revenue is concentrated across a subset of leading categories; the Top 5 categories account for ~39% (Top 15 account for ~76%) of total revenue.
+- Many long-tail categories contribute relatively little revenue.
+
+Recommendation:
+- Prioritize inventory availability and marketing budget for the highest-revenue categories to improve ROI.
+- For low-revenue long-tail categories, consider leaner stocking strategies (e.g., limited inventory / make-to-order / reduced assortment).
+
+5.5 Review Score & Delivery Time Impact
+Use code below:
+```python
+orders_delivery = orders.copy()
+orders_delivery = orders_delivery[
+    orders_delivery["order_delivered_customer_date"].notna()]
+
+orders_delivery["delivery_days"] = (
+    (orders_delivery["order_delivered_customer_date"] -
+     orders_delivery["order_purchase_timestamp"]).dt.days)
+
+reviews_join = order_reviews.merge(
+    orders_delivery[["order_id", "delivery_days"]],
+    on="order_id",
+    how="inner")
+
+plt.figure(figsize=(8,5))
+sns.boxplot(x="review_score", y="delivery_days", data=reviews_join)
+plt.title("Delivery Time vs Review Score")
+plt.tight_layout()
+plt.show()
+```
+Result:
+<img width="790" height="490" alt="Delivery Time vs Reviewe Score" src="https://github.com/user-attachments/assets/8d51490e-dee3-41d0-8fe3-0582c64babd3" />
+
+Assessment:
+- The boxplot indicates longer delivery time is associated with lower review scores (1–2 star reviews show noticeably higher delivery days).
+- Logistics performance is a key driver of customer satisfaction (and potentially conversion).
+
+Recommendation:
+- Set and monitor delivery SLA (service-level agreement) by seller/region and track breach rates.
+- Prioritize faster fulfillment (closer warehouses) for top categories/high-volume items.
+- Rank sellers by delivery_days + low review rate.
+- Apply improvement actions (process fix, visibility reduction, or penalties depending on policy).
+
+5.6 Train–test split
+Use code below:
+```python
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from sklearn.metrics import mean_absolute_percentage_error
+
+y = daily_revenue.copy()
+h = 60
+y_train = y.iloc[:-h]
+y_test = y.iloc[-h:]
+```
+5.7 Baseline: Naive forecast
+Use code below:
+```python
+y_naive = pd.Series(index=y_test.index, data=y_train.iloc[-1])
+mape_naive = mean_absolute_percentage_error(y_test, y_naive)
+print("Naive MAPE:", mape_naive)
+```
+Result:
+Naive MAPE: 0.7014361267624021
+
+5.8 SARIMAX model
+Use code below:
+```python
+model = SARIMAX(y_train, order=(1,1,1), seasonal_order=(1,1,1,7))
+res = model.fit(disp=False)
+pred = res.predict(start=y_test.index[0], end=y_test.index[-1])
+mape_sarima = mean_absolute_percentage_error(y_test, pred)
+print("SARIMA MAPE:", mape_sarima)
+```
+Result:
+SARIMA MAPE: 0.796364798097603
+
+5.9 Compare forecast vs actual
+Use code below:
+```python
+plt.figure(figsize=(14,5))
+plt.plot(y_train.index, y_train.values, label="Train")
+plt.plot(y_test.index, y_test.values, label="Test - Actual")
+plt.plot(pred.index, pred.values, label="SARIMA Forecast")
+plt.plot(y_naive.index, y_naive.values, label="Naive Forecast", linestyle="--")
+plt.legend()
+plt.title("Model Comparison")
+plt.tight_layout()
+plt.show()
+```
+Result:
+<img width="1389" height="490" alt="Model Comparision" src="https://github.com/user-attachments/assets/4a62d106-e389-452a-ab66-27eb33aa4047" />
+
+Assessment:
+- Results show Naive MAPE is lower than SARIMAX → the series is highly volatile, seasonal signal may be weak, or models are affected by outliers/spikes.
+- This does not necessarily mean SARIMAX is “bad”; it often means baseline is hard to beat without adding features (events/holidays/promos) or tuning.
+
+Recommendation:
+- Keep Naive as a strong benchmark baseline and explicitly state that “baseline is strong”.
+- Keep SARIMAX as an “advanced attempt”, but it needs parameter tuning and/or exogenous variables (event/holiday/promo flags) to outperform the baseline.
+
+5.10 Forecast 60 days
+Use code below:
+```python
+model_full = SARIMAX(y, order=(1,1,1), seasonal_order=(1,1,1,7))
+res_full = model_full.fit(disp=False)
+
+future_index = pd.date_range(start=y.index.max() + pd.Timedelta(days=1), periods=60, freq="D")
+future_forecast = res_full.predict(start=future_index[0], end=future_index[-1])
+
+plt.figure(figsize=(14,5))
+plt.plot(y.index, y.values, label="History")
+plt.plot(future_index, future_forecast.values, label="60-Day Forecast")
+plt.legend()
+```
+
+Assessment:
+- The 60-day forecast suggests relatively stable expected revenue without major spikes (unless a campaign/event occurs).
+- Given volatility and outlier sensitivity, the forecast should be treated as a planning reference rather than an exact target.
+
+Recommendation:
+- Use the 60-day forecast to set:
+  + Base inventory levels for top categories (avoid overstocking).
+  + Capacity planning for warehouse and delivery based on baseline demand.
+- For upcoming campaigns, use scenario planning (Base / Promo / Peak) instead of relying on a single forecast line.
+
+**##6: Conclusion**
+
+**Inventory**
+- Increase stock 10–20% for top categories before Q4
+- Reduce stock in low‑season months (Jan–Feb)
+- Use make‑to‑order for long‑tail categories
+- Prepare inventory before Tue–Wed weekly peaks
+  
+**Marketing**
+- Focus ad spend on Q4 and early week (Mon–Wed)
+- Promote top categories during peak windows
+- Highlight products with high review scores
+  
+**Logistics**
+- Reduce delivery delays to improve review scores
+- Prioritize sellers with faster lead times
+- Consider fulfillment centers closer to customer cluster
+
+**##7. Limitations & Future Work**
+
+**Limitations:**
+- Data timeframe (2016–2018): findings may not reflect current market behavior, pricing, competition, or platform dynamics.
+- Revenue proxy: revenue is computed from item prices (and may exclude cancellations, refunds, discounts, and full shipping economics), which may bias absolute levels.
+- Event/outlier effects: large spikes likely reflect promotions or anomalies; without explicit event flags, models can mislearn patterns.
+- Model scope: SARIMAX was used with limited tuning and without external drivers; results may understate the potential of more feature-rich models.
+
+**Future deep dive analysis:**
+- Feature engineering for forecasting: add calendar features (weekday/month), holiday & campaign flags, lag/rolling features; test Prophet or tree-based models (XGBoost/LightGBM) to capture nonlinear patterns.
+- Robust evaluation: use rolling-origin / walk-forward validation and compare multiple horizons (7/14/30/60 days).
+- Outlier handling: apply winsorization/capping or separate “event vs non-event” modeling to stabilize predictions.
+
+**Future Wide spread the scope analysis:**
+- Seller-level analysis: identify sellers driving long delivery times and low ratings; build seller scorecards (delivery_days, review_score, on-time rate).
+- Category-level forecasting: forecast at top-category level and aggregate upward for more actionable inventory planning.
+- Inventory simulation: translate forecasts into inventory decisions (safety stock, reorder point, service level) and test policies under peak-season scenarios.
+- Customer & cohort insights (optional): segment customers by frequency/value and evaluate retention impact from delivery performance and review outcomes.
+- Apply time-series cross-validation to reduce bias from a single train–test split and to better assess model stability across different forecast windows (e.g., 7/14/30/60 days).
+
+**##8. Tools & Libraries**
 - pandas
 - numpy
 - matplotlib
@@ -426,7 +703,7 @@ Minimum packages
 - prophet (optional for advanced forecasting)
 Add these to requirements.txt for reproducibility.
 
-Contact and attribution
+**Contact and attribution
 Author - Khai Tran
-Contact - khai.trantrong2@gmail.com - https://www.linkedin.com/in/khaitran22297/.
+Contact - khai.trantrong2@gmail.com - https://www.linkedin.com/in/khaitran22297/.**
 
