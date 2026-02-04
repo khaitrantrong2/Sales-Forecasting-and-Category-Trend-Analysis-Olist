@@ -2,7 +2,7 @@
 This project analyzes the Olist Brazilian E‑commerce dataset to explore sales trends, customer behavior, product categories, and to build a short‑term sales forecast.
 The goal is to support high‑level inventory and marketing planning using historical data.
 
-**## 1. Project Objectives**
+## 1. Project Objectives
 - Clean and prepare the Olist dataset for analysis
 - Explore sales patterns (daily, weekly, monthly)
 - Identify top‑performing product categories
