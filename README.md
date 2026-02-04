@@ -41,6 +41,7 @@ The notebook performs:
 Step 1: Set-up and Install dependencies
 - Open the notebook in Colab.
 - Install dependencies
+
 Use code below:
 ```python
 import pandas as pd
@@ -60,6 +61,7 @@ uploaded = files.upload()
 ```
 
 - Read data:
+
 Use code below:
 ```python
 customers = pd.read_csv('olist_customers_dataset.csv')
@@ -75,11 +77,13 @@ product_category = pd.read_csv('product_category_name_translation.csv')
 Step 3: Data type standardization
 
 - To see sample of each source (replicate 9 times for 9 files)
+
 Use code below:
 ```python
 geolocation.head()
 ```
 - To check data type of each source (replicate 9 times for 9 files)
+
 Use code below:
 ```python
 geolocation.info()
@@ -90,6 +94,7 @@ Converted:
 - Prices & freight → numeric
 
 - Result:
+
 Use code below for string convert:
 ```python
 geolocation["geolocation_city"] = geolocation["geolocation_city"].astype("string")
@@ -121,6 +126,7 @@ customers["customer_city"] = customers["customer_city"].astype("string")
 customers["customer_state"] = customers["customer_state"].astype("string")
 customers["customer_zip_code_prefix"] = customers["customer_zip_code_prefix"].astype("string")
 ```
+
 Use code below for datetime convert:
 ```python
 order_items["shipping_limit_date"] = pd.to_datetime(order_items["shipping_limit_date"], errors="coerce")
@@ -131,12 +137,14 @@ orders["order_delivered_carrier_date"] = pd.to_datetime(orders["order_delivered_
 orders["order_delivered_customer_date"] = pd.to_datetime(orders["order_delivered_customer_date"], errors="coerce")
 orders["order_estimated_delivery_date"] = pd.to_datetime(orders["order_estimated_delivery_date"], errors="coerce")
 ```
+
 Use code below for numeric convert:
 ```python
 order_payments["payment_value"] = pd.to_numeric(order_payments["payment_value"], errors="coerce")
 order_items["price"] = pd.to_numeric(order_items["price"], errors="coerce")
 order_items["freight_value"] = pd.to_numeric(order_items["freight_value"], errors="coerce")
 ```
+
 Result:
 
 1. geolocation table
@@ -291,6 +299,7 @@ customers.duplicated("customer_id").sum()
 sellers.duplicated("seller_id").sum()
 product_category.duplicated("product_category_name").sum()
 ```
+
 Result:
 Except order_reviews shown duplicate result - np.int64(814), acceptable as review bundle cases.  
 The rest shown no duplicate - np.int64(0)
@@ -305,6 +314,7 @@ products2 = products.merge(
     on="product_category_name",
     how="left")
 ```
+
 - Check increase row after merge
   
 ```python
@@ -321,15 +331,18 @@ items_cat = order_items.merge(
     on="product_id",
     how="left")
 ```
+
 Extract purchase date from orders use code below:
 ```python
 orders_clean = orders[["order_id", "order_purchase_timestamp", "order_status"]].copy()
 orders_clean = orders_clean.rename(columns={"order_purchase_timestamp": "order_date"})
 ```
+
 Filter delivered orders use code below:
 ```python
 orders_clean = orders_clean[orders_clean["order_status"] == "delivered"]
 ```
+
 Merge date into items use code below:
 ```python
 items_with_date = items_cat.merge(
@@ -340,6 +353,7 @@ items_with_date = items_cat.merge(
 items_with_date["order_date"] = items_with_date["order_date"].dt.date
 items_with_date["order_date"] = pd.to_datetime(items_with_date["order_date"])
 ```
+
 Check increase row after merge:
 
 ```python
@@ -349,6 +363,7 @@ Result:
 (112650, 112650, 110197)
 
 - Create daily revenue (base for forecast)
+
 Use code below:
 ```python
 items_with_date["revenue"] = items_with_date["price"] + items_with_date["freight_value"]
@@ -359,6 +374,11 @@ daily_revenue = (
     .sort_index())
 daily_revenue = daily_revenue.asfreq("D").fillna(0)
 ```
+
+Check duplicate
+
+Use code below:
+
 ```python
 daily_revenue.index.duplicated().sum()
 ```
@@ -370,6 +390,7 @@ Check increase row after merge:
 ```python
 len(order_items), len(items_cat), len(items_with_date)
 ```
+
 Result:
 (112650, 112650, 110197)
 
@@ -378,6 +399,7 @@ Data quality guaranteed for final cleaned datasets:
 - Confirmed the aggregated daily time series has no duplicate dates, no missing revenue, and no negative values after reindexing to a full daily calendar.
 
 ## 5. Exploratory Data Analysis (EDA)
+
 **Modeling Approach**
 - Aggregated daily/monthly/weekly revenue
 - Category Contribution Analysis & Related factors impact (Review score & Delivery time)
@@ -387,6 +409,7 @@ Data quality guaranteed for final cleaned datasets:
 - Evaluation metric: MAPE
 
 5.1 Daily revenue over time
+
 Use code below:
 ```python
 daily_revenue = (
@@ -405,6 +428,7 @@ plt.tight_layout()
 plt.show()
 ```
 - Rolling mean
+
 Use code below:
 ```python
 plt.figure(figsize=(14,5))
@@ -429,6 +453,7 @@ Recommendation:
 - Flag extreme spike days for root-cause analysis (campaign, promotion, operational issues) and treat them separately in forecasting.
 
 5.2 Revenue by month
+
 Use code below:
 ```python
 monthly_revenue = daily_revenue.resample("ME").sum()
@@ -454,6 +479,7 @@ Recommendation:
 - Pre-book fulfillment capacity and logistics resources before major shopping events (e.g., Black Friday, Christmas, YE flash-sales).
 
 5.3 Weekly Seasonality
+
 Use code below:
 ```python
 import seaborn as sns
@@ -485,6 +511,7 @@ Recommendation:
 - Align operational staffing (picking/packing/support) with early weekday demand patterns.
 
 5.4 Category Contribution Analysis
+
 Use code below:
 ```python
 cat_revenue = (
@@ -507,6 +534,7 @@ Result:
 <img width="990" height="590" alt="Top 15 Categories by Revenue" src="https://github.com/user-attachments/assets/62cc880c-971f-4314-8563-6742d8b7cca5" />
 
 Calculate ad-hoc information of % Top sales contribution total revenue:
+
 Use code below:
 ```python
 total_rev = items_with_date["revenue"].sum()
@@ -543,6 +571,7 @@ Recommendation:
 - For low-revenue long-tail categories, consider leaner stocking strategies (e.g., limited inventory / make-to-order / reduced assortment).
 
 5.5 Review Score & Delivery Time Impact
+
 Use code below:
 ```python
 orders_delivery = orders.copy()
@@ -578,6 +607,7 @@ Recommendation:
 - Apply improvement actions (process fix, visibility reduction, or penalties depending on policy).
 
 5.6 Train–test split
+
 Use code below:
 ```python
 from statsmodels.tsa.statespace.sarimax import SARIMAX
@@ -589,6 +619,7 @@ y_train = y.iloc[:-h]
 y_test = y.iloc[-h:]
 ```
 5.7 Baseline: Naive forecast
+
 Use code below:
 ```python
 y_naive = pd.Series(index=y_test.index, data=y_train.iloc[-1])
@@ -599,6 +630,7 @@ Result:
 Naive MAPE: 0.7014361267624021
 
 5.8 SARIMAX model
+
 Use code below:
 ```python
 model = SARIMAX(y_train, order=(1,1,1), seasonal_order=(1,1,1,7))
@@ -611,6 +643,7 @@ Result:
 SARIMA MAPE: 0.796364798097603
 
 5.9 Compare forecast vs actual
+
 Use code below:
 ```python
 plt.figure(figsize=(14,5))
@@ -635,6 +668,7 @@ Recommendation:
 - Keep SARIMAX as an “advanced attempt”, but it needs parameter tuning and/or exogenous variables (event/holiday/promo flags) to outperform the baseline.
 
 5.10 Forecast 60 days
+
 Use code below:
 ```python
 model_full = SARIMAX(y, order=(1,1,1), seasonal_order=(1,1,1,7))
