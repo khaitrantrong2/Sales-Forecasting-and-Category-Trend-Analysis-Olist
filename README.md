@@ -88,12 +88,10 @@ Use code below:
 ```python
 geolocation.info()
 ```
-Converted:
+From result of checking sample and data type we converted:
 - IDs → string
 - Dates → datetime
 - Prices & freight → numeric
-
-- Result:
 
 Use code below for string convert:
 ```python
@@ -148,6 +146,7 @@ order_items["freight_value"] = pd.to_numeric(order_items["freight_value"], error
 Result:
 
 1. geolocation table
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 1000163 entries, 0 to 1000162
 Data columns (total 5 columns):
@@ -160,8 +159,9 @@ Data columns (total 5 columns):
  4   geolocation_state            1000163 non-null  string 
 dtypes: float64(2), string(3)
 memory usage: 38.2 MB
-
+```
 2. order_items table
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 112650 entries, 0 to 112649
 Data columns (total 7 columns):
@@ -176,8 +176,9 @@ Data columns (total 7 columns):
  6   freight_value        112650 non-null  float64       
 dtypes: datetime64[ns](1), float64(2), int64(1), string(3)
 memory usage: 6.0 MB
-
+```
 3. order_payments table
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 103886 entries, 0 to 103885
 Data columns (total 5 columns):
@@ -190,8 +191,9 @@ Data columns (total 5 columns):
  4   payment_value         103886 non-null  float64
 dtypes: float64(1), int64(2), string(2)
 memory usage: 4.0 MB
-
+```
 4. Order_review
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 99224 entries, 0 to 99223
 Data columns (total 7 columns):
@@ -206,9 +208,9 @@ Data columns (total 7 columns):
  6   review_answer_timestamp  99224 non-null  datetime64[ns]
 dtypes: datetime64[ns](2), int64(1), string(4)
 memory usage: 5.3 MB
-
+```
 5.Order table
-
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 99441 entries, 0 to 99440
 Data columns (total 8 columns):
@@ -224,9 +226,9 @@ Data columns (total 8 columns):
  7   order_estimated_delivery_date  99441 non-null  datetime64[ns]
 dtypes: datetime64[ns](5), string(3)
 memory usage: 6.1 MB
-
+```
 6.Product table
-
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 32951 entries, 0 to 32950
 Data columns (total 9 columns):
@@ -243,9 +245,9 @@ Data columns (total 9 columns):
  8   product_width_cm            32949 non-null  float64
 dtypes: float64(7), string(2)
 memory usage: 2.3 MB
-
+```
 7. Seller table
-
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 3095 entries, 0 to 3094
 Data columns (total 4 columns):
@@ -257,9 +259,9 @@ Data columns (total 4 columns):
  3   seller_state            3095 non-null   string
 dtypes: string(4)
 memory usage: 96.8 KB
-
+```
 8. Product_category table
-
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 71 entries, 0 to 70
 Data columns (total 2 columns):
@@ -269,9 +271,9 @@ Data columns (total 2 columns):
  1   product_category_name_english  71 non-null     string
 dtypes: string(2)
 memory usage: 1.2 KB
-
+```
 9. Customer table
-
+```python
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 99441 entries, 0 to 99440
 Data columns (total 5 columns):
@@ -284,11 +286,11 @@ Data columns (total 5 columns):
  4   customer_state            99441 non-null  string
 dtypes: string(5)
 memory usage: 3.8 MB
-
+```
 Data valid guaranteed:
 - IDs → must be unique
 
-Use code below for numeric convert:
+Use code below for checking duplicate:
 ```python
 orders.duplicated("order_id").sum()
 order_items.duplicated(["order_id","order_item_id"]).sum()
@@ -316,7 +318,8 @@ products2 = products.merge(
 ```
 
 - Check increase row after merge
-  
+
+Use code below:  
 ```python
 len(order_items), len(items_cat), len(items_with_date)
 ```
@@ -325,6 +328,8 @@ Result:
 
 - Create order_items + category + date
 Merge order_items and products to have category use code below:
+
+Use code below:
 ```python
 items_cat = order_items.merge(
     products2[["product_id", "product_category_name_english"]],
@@ -332,18 +337,24 @@ items_cat = order_items.merge(
     how="left")
 ```
 
-Extract purchase date from orders use code below:
+Extract purchase date from orders 
+
+Use code below:
 ```python
 orders_clean = orders[["order_id", "order_purchase_timestamp", "order_status"]].copy()
 orders_clean = orders_clean.rename(columns={"order_purchase_timestamp": "order_date"})
 ```
 
-Filter delivered orders use code below:
+Filter delivered orders:
+
+Use code below:
 ```python
 orders_clean = orders_clean[orders_clean["order_status"] == "delivered"]
 ```
 
-Merge date into items use code below:
+Merge date into items:
+
+Use code below:
 ```python
 items_with_date = items_cat.merge(
     orders_clean[["order_id", "order_date"]],
@@ -356,6 +367,7 @@ items_with_date["order_date"] = pd.to_datetime(items_with_date["order_date"])
 
 Check increase row after merge:
 
+Use code below:
 ```python
 len(order_items), len(items_cat), len(items_with_date)
 ```
@@ -375,7 +387,7 @@ daily_revenue = (
 daily_revenue = daily_revenue.asfreq("D").fillna(0)
 ```
 
-Check duplicate
+Check duplicate revenue line
 
 Use code below:
 
@@ -387,6 +399,7 @@ np.int64(0)
 
 Check increase row after merge:
 
+Use code below:
 ```python
 len(order_items), len(items_cat), len(items_with_date)
 ```
@@ -395,7 +408,7 @@ Result:
 (112650, 112650, 110197)
 
 Data quality guaranteed for final cleaned datasets:
-- Verified joins did not create many-to-many “row explosions” by comparing row counts before vs after merges.
+- Verified joins did not create many-to-many row explosions by comparing row counts before vs after merges.
 - Confirmed the aggregated daily time series has no duplicate dates, no missing revenue, and no negative values after reindexing to a full daily calendar.
 
 ## 5. Exploratory Data Analysis (EDA)
@@ -443,12 +456,12 @@ Result:
 <img width="1389" height="490" alt="Rolling Average Revenue" src="https://github.com/user-attachments/assets/e42097b1-e89c-4c54-9784-11ac990e47df" />
 <img width="1389" height="490" alt="Daily revenue Over Time" src="https://github.com/user-attachments/assets/ced9fc01-f04e-49fb-8adb-9d507ef39612" />
 
-Assessment:
+**Assessment:**
 - Daily revenue is highly volatile, suggesting demand is not evenly distributed across days.
 - There is a significant spike, which may be driven by a special event such as a flash sale or a marketing campaign.
 - The 7-day and 30-day moving averages indicate an overall upward trend and then a more stable level afterward.
 
-Recommendation:
+**Recommendation:**
 - Use moving averages (7D/30D) as planning signals for inventory buffer and fulfillment capacity.
 - Flag extreme spike days for root-cause analysis (campaign, promotion, operational issues) and treat them separately in forecasting.
 
@@ -469,12 +482,12 @@ plt.show()
 Result:
 <img width="1189" height="490" alt="Monthly Revenue Trend" src="https://github.com/user-attachments/assets/ec67390e-e8d7-4ff6-ab5d-6222f2d1e410" />
 
-Assessment:
+**Assessment:**
 - Revenue increases strongly toward year-end (Q4), especially in November–December.
 - The months after the peak (e.g., January–February) tend to be lower, consistent with post-holiday demand normalization.
 - Overall, the platform shows growth over time with seasonal fluctuations.
 
-Recommendation:
+**Recommendation:**
 - Build a seasonal inventory and marketing plan: ramp up ahead of Q4 and reduce inventory after the peak to avoid dead stock.
 - Pre-book fulfillment capacity and logistics resources before major shopping events (e.g., Black Friday, Christmas, YE flash-sales).
 
@@ -502,11 +515,11 @@ plt.show()
 Result:
 <img width="989" height="490" alt="Revenue by Day of Week" src="https://github.com/user-attachments/assets/6bad57d3-396c-49dd-8623-314d86b5edb3" />
 
-Assessment:
+**Assessment:**
 - Revenue is generally higher on weekdays, especially early week-day and lower on weekends.
 - This suggests customer purchasing behavior is more active during working days.
 
-Recommendation:
+**Recommendation:**
 - Concentrate marketing spend and promotions on peak weekdays to maximize conversion efficiency.
 - Align operational staffing (picking/packing/support) with early weekday demand patterns.
 
@@ -562,11 +575,11 @@ top15_share = top15_rev / total_rev * 100
 print("Top 15 share (%):", top15_share)
 ```
 
-Assessment:
+**Assessment:**
 - Revenue is concentrated across a subset of leading categories; the Top 5 categories account for ~39% (Top 15 account for ~76%) of total revenue.
 - Many long-tail categories contribute relatively little revenue.
 
-Recommendation:
+**Recommendation:**
 - Prioritize inventory availability and marketing budget for the highest-revenue categories to improve ROI.
 - For low-revenue long-tail categories, consider leaner stocking strategies (e.g., limited inventory / make-to-order / reduced assortment).
 
@@ -596,11 +609,11 @@ plt.show()
 Result:
 <img width="790" height="490" alt="Delivery Time vs Reviewe Score" src="https://github.com/user-attachments/assets/8d51490e-dee3-41d0-8fe3-0582c64babd3" />
 
-Assessment:
+**Assessment:**
 - The boxplot indicates longer delivery time is associated with lower review scores (1–2 star reviews show noticeably higher delivery days).
 - Logistics performance is a key driver of customer satisfaction (and potentially conversion).
 
-Recommendation:
+**Recommendation:**
 - Set and monitor delivery SLA (service-level agreement) by seller/region and track breach rates.
 - Prioritize faster fulfillment (closer warehouses) for top categories/high-volume items.
 - Rank sellers by delivery_days + low review rate.
@@ -636,11 +649,11 @@ Use code below:
 model = SARIMAX(y_train, order=(1,1,1), seasonal_order=(1,1,1,7))
 res = model.fit(disp=False)
 pred = res.predict(start=y_test.index[0], end=y_test.index[-1])
-mape_sarima = mean_absolute_percentage_error(y_test, pred)
-print("SARIMA MAPE:", mape_sarima)
+mape_sarimax = mean_absolute_percentage_error(y_test, pred)
+print("SARIMAX MAPE:", mape_sarimax)
 ```
 Result:
-SARIMA MAPE: 0.796364798097603
+SARIMAX MAPE: 0.796364798097603
 
 5.9 Compare forecast vs actual
 
@@ -649,7 +662,7 @@ Use code below:
 plt.figure(figsize=(14,5))
 plt.plot(y_train.index, y_train.values, label="Train")
 plt.plot(y_test.index, y_test.values, label="Test - Actual")
-plt.plot(pred.index, pred.values, label="SARIMA Forecast")
+plt.plot(pred.index, pred.values, label="SARIMAX Forecast")
 plt.plot(y_naive.index, y_naive.values, label="Naive Forecast", linestyle="--")
 plt.legend()
 plt.title("Model Comparison")
@@ -659,11 +672,11 @@ plt.show()
 Result:
 <img width="1389" height="490" alt="Model Comparision" src="https://github.com/user-attachments/assets/4a62d106-e389-452a-ab66-27eb33aa4047" />
 
-Assessment:
+**Assessment:**
 - Results show Naive MAPE is lower than SARIMAX → the series is highly volatile, seasonal signal may be weak, or models are affected by outliers/spikes.
 - This does not necessarily mean SARIMAX is “bad”; it often means baseline is hard to beat without adding features (events/holidays/promos) or tuning.
 
-Recommendation:
+**Recommendation:**
 - Keep Naive as a strong benchmark baseline and explicitly state that “baseline is strong”.
 - Keep SARIMAX as an “advanced attempt”, but it needs parameter tuning and/or exogenous variables (event/holiday/promo flags) to outperform the baseline.
 
@@ -683,11 +696,11 @@ plt.plot(future_index, future_forecast.values, label="60-Day Forecast")
 plt.legend()
 ```
 
-Assessment:
+**Assessment:**
 - The 60-day forecast suggests relatively stable expected revenue without major spikes (unless a campaign/event occurs).
 - Given volatility and outlier sensitivity, the forecast should be treated as a planning reference rather than an exact target.
 
-Recommendation:
+**Recommendation:**
 - Use the 60-day forecast to set:
   + Base inventory levels for top categories (avoid overstocking).
   + Capacity planning for warehouse and delivery based on baseline demand.
@@ -724,7 +737,7 @@ Recommendation:
 - Robust evaluation: use rolling-origin / walk-forward validation and compare multiple horizons (7/14/30/60 days).
 - Outlier handling: apply winsorization/capping or separate “event vs non-event” modeling to stabilize predictions.
 
-**Future Wide spread the scope analysis:**
+**Future Wide-scope analysis:**
 - Seller-level analysis: identify sellers driving long delivery times and low ratings; build seller scorecards (delivery_days, review_score, on-time rate).
 - Category-level forecasting: forecast at top-category level and aggregate upward for more actionable inventory planning.
 - Inventory simulation: translate forecasts into inventory decisions (safety stock, reorder point, service level) and test policies under peak-season scenarios.
