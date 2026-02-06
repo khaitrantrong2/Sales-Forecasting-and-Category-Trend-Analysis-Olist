@@ -81,12 +81,28 @@ Step 3: Data type standardization
 Use code below:
 ```python
 geolocation.head()
+order_items.head()
+order_payments.head()
+order_reviews.head()
+orders.head()
+products.head()
+sellers.head()
+product_category.head()
+customers.head()
 ```
 - To check data type of each source (replicate respectively 9 times for 9 files)
 
 Use code below:
 ```python
 geolocation.info()
+order_items.info()
+order_payments.info()
+order_reviews.info()
+orders.info()
+products.info()
+sellers.info()
+product_category.info()
+customers.info()
 ```
 
 From result of checking sample and data type we converted:
