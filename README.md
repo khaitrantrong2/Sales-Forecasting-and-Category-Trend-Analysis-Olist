@@ -76,18 +76,19 @@ product_category = pd.read_csv('product_category_name_translation.csv')
 ```
 Step 3: Data type standardization
 
-- To see sample of each source (replicate 9 times for 9 files)
+- To see sample of each source (replicate respectively 9 times for 9 files)
 
 Use code below:
 ```python
 geolocation.head()
 ```
-- To check data type of each source (replicate 9 times for 9 files)
+- To check data type of each source (replicate respectively 9 times for 9 files)
 
 Use code below:
 ```python
 geolocation.info()
 ```
+
 From result of checking sample and data type we converted:
 - IDs → string
 - Dates → datetime
@@ -143,7 +144,12 @@ order_items["price"] = pd.to_numeric(order_items["price"], errors="coerce")
 order_items["freight_value"] = pd.to_numeric(order_items["freight_value"], errors="coerce")
 ```
 
-Result:
+Check result data type after convert:
+
+Use code below (replicate respectively 9 times for 9 files):
+```python
+geolocation.info()
+```
 
 1. geolocation table
 ```python
@@ -324,7 +330,9 @@ Use code below:
 len(order_items), len(items_cat), len(items_with_date)
 ```
 Result:
+```python
 (112650, 112650, 110197)
+```
 
 - Create order_items + category + date
 Merge order_items and products to have category use code below:
@@ -337,7 +345,7 @@ items_cat = order_items.merge(
     how="left")
 ```
 
-Extract purchase date from orders 
+- Extract purchase date from orders 
 
 Use code below:
 ```python
@@ -345,14 +353,14 @@ orders_clean = orders[["order_id", "order_purchase_timestamp", "order_status"]].
 orders_clean = orders_clean.rename(columns={"order_purchase_timestamp": "order_date"})
 ```
 
-Filter delivered orders:
+- Filter delivered orders:
 
 Use code below:
 ```python
 orders_clean = orders_clean[orders_clean["order_status"] == "delivered"]
 ```
 
-Merge date into items:
+- Merge date into items:
 
 Use code below:
 ```python
@@ -365,14 +373,17 @@ items_with_date["order_date"] = items_with_date["order_date"].dt.date
 items_with_date["order_date"] = pd.to_datetime(items_with_date["order_date"])
 ```
 
-Check increase row after merge:
+- Check increase row after merge:
 
 Use code below:
 ```python
 len(order_items), len(items_cat), len(items_with_date)
 ```
+
 Result:
+```python
 (112650, 112650, 110197)
+```
 
 - Create daily revenue (base for forecast)
 
@@ -387,17 +398,20 @@ daily_revenue = (
 daily_revenue = daily_revenue.asfreq("D").fillna(0)
 ```
 
-Check duplicate revenue line
+- Check duplicate revenue line
 
 Use code below:
 
 ```python
 daily_revenue.index.duplicated().sum()
 ```
-Result:
-np.int64(0)
 
-Check increase row after merge:
+Result:
+```python
+np.int64(0)
+```
+
+- Check increase row after merge:
 
 Use code below:
 ```python
@@ -405,9 +419,11 @@ len(order_items), len(items_cat), len(items_with_date)
 ```
 
 Result:
+```python
 (112650, 112650, 110197)
+```
 
-Data quality guaranteed for final cleaned datasets:
+**Data quality guaranteed for final cleaned datasets:**
 - Verified joins did not create many-to-many row explosions by comparing row counts before vs after merges.
 - Confirmed the aggregated daily time series has no duplicate dates, no missing revenue, and no negative values after reindexing to a full daily calendar.
 
@@ -640,7 +656,9 @@ mape_naive = mean_absolute_percentage_error(y_test, y_naive)
 print("Naive MAPE:", mape_naive)
 ```
 Result:
+```python
 Naive MAPE: 0.7014361267624021
+```
 
 5.8 SARIMAX model
 
@@ -653,7 +671,9 @@ mape_sarimax = mean_absolute_percentage_error(y_test, pred)
 print("SARIMAX MAPE:", mape_sarimax)
 ```
 Result:
+```python
 SARIMAX MAPE: 0.796364798097603
+```
 
 5.9 Compare forecast vs actual
 
