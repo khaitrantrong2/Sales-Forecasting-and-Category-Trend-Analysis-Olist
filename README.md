@@ -1,4 +1,7 @@
-<img width="1228" height="1138" alt="image" src="https://github.com/user-attachments/assets/4ad2fcb8-1223-404c-97de-bec2c67135f8" />
+
+<p align="center">
+  <img src="<img width="1228" height="1138" alt="image" src="https://github.com/user-attachments/assets/a6e285d5-2395-4211-9f1c-98042ee636c5" />" width="180">
+</p>
 
 
 ## Sales-Forecasting-and-Category-Trend-Analysis-Olist
