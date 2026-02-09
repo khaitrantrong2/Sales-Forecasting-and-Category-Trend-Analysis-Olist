@@ -1,7 +1,8 @@
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/a6e285d5-2395-4211-9f1c-98042ee636c5" width="180">
+  <img src="https://github.com/user-attachments/assets/3b8175f1-843f-4955-9eea-66b5c5aee5ea" width="180">
 </p>
+
 
 
 ## Sales-Forecasting-and-Category-Trend-Analysis-Olist
