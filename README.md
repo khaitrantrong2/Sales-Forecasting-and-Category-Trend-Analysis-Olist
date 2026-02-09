@@ -10,7 +10,7 @@ The goal is to support high‑level inventory and marketing planning using histo
 - Build a 60‑day revenue forecast using time‑series modeling
 - Provide high‑level inventory & marketing recommendations
 
-## 2. Dataset and repository structure
+## 2. Dataset, Tools & Technologies
 Dataset
 - Source: Olist Brazilian E‑commerce public dataset - https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 - Key tables used:
@@ -28,13 +28,13 @@ Dataset
 | product_category_name_translation | PT → EN category mapping |
 
 
-Repository layout
-- Google collab notebook - main Colab notebook: data prep, EDA, forecasting, recommendations - https://colab.research.google.com/drive/1cm-cTILbDeIh0K9k-TdQh3sh1EGSprYx#scrollTo=o1sxtUIl6KTB
-- charts/ - exported PNG charts used in slides (daily_revenue.png; rolling_ma.png; monthly_revenue.png; weekday_revenue.png; top_categories.png; delivery_vs_review.png; forecast_60day.png).
-- slides/ - presentation file and exported PDF.
-- data/ - raw CSV files.
-- README.md - this file.
-
+Tools & Technologies
+- Python (Pandas, NumPy, Matplotlib, Seaborn, Statsmodels)
+- Google Colab (Notebook)
+- GitHub (Markdown - Readme)
+- Word (Summary Report) 
+- PowerPoint (Presentation Slide)
+  
 ## 3. Data Preparation
 The notebook performs:
 
@@ -76,7 +76,7 @@ product_category = pd.read_csv('product_category_name_translation.csv')
 ```
 Step 3: Data type standardization
 
-- To see sample of each source (replicate respectively 9 times for 9 files)
+- To see sample of each source
 
 Use code below:
 ```python
@@ -90,7 +90,7 @@ sellers.head()
 product_category.head()
 customers.head()
 ```
-- To check data type of each source (replicate respectively 9 times for 9 files)
+- To check data type of each source
 
 Use code below:
 ```python
@@ -109,6 +109,8 @@ From result of checking sample and data type we converted:
 - IDs → string
 - Dates → datetime
 - Prices & freight → numeric
+- Ensure coerced invalid timestamps.
+
 
 Use code below for string convert:
 ```python
@@ -676,19 +678,19 @@ Result:
 Naive MAPE: 0.7014361267624021
 ```
 
-5.8 SARIMAX model
+5.8 SARIMA model
 
 Use code below:
 ```python
 model = SARIMAX(y_train, order=(1,1,1), seasonal_order=(1,1,1,7))
 res = model.fit(disp=False)
 pred = res.predict(start=y_test.index[0], end=y_test.index[-1])
-mape_sarimax = mean_absolute_percentage_error(y_test, pred)
-print("SARIMAX MAPE:", mape_sarimax)
+mape_sarima = mean_absolute_percentage_error(y_test, pred)
+print("SARIMA MAPE:", mape_sarima)
 ```
 Result:
 ```python
-SARIMAX MAPE: 0.796364798097603
+SARIMA MAPE: 0.796364798097603
 ```
 
 5.9 Compare forecast vs actual
@@ -698,7 +700,7 @@ Use code below:
 plt.figure(figsize=(14,5))
 plt.plot(y_train.index, y_train.values, label="Train")
 plt.plot(y_test.index, y_test.values, label="Test - Actual")
-plt.plot(pred.index, pred.values, label="SARIMAX Forecast")
+plt.plot(pred.index, pred.values, label="SARIMA Forecast")
 plt.plot(y_naive.index, y_naive.values, label="Naive Forecast", linestyle="--")
 plt.legend()
 plt.title("Model Comparison")
@@ -709,12 +711,12 @@ Result:
 <img width="1389" height="490" alt="Model Comparision" src="https://github.com/user-attachments/assets/4a62d106-e389-452a-ab66-27eb33aa4047" />
 
 **Assessment:**
-- Results show Naive MAPE is lower than SARIMAX → the series is highly volatile, seasonal signal may be weak, or models are affected by outliers/spikes.
-- This does not necessarily mean SARIMAX is “bad”; it often means baseline is hard to beat without adding features (events/holidays/promos) or tuning.
+- Results show Naive MAPE is lower than SARIMA → the series is highly volatile, seasonal signal may be weak, or models are affected by outliers/spikes.
+- This does not necessarily mean SARIMA is “bad”; it often means baseline is hard to beat without adding features (events/holidays/promos) or tuning.
 
 **Recommendation:**
 - Keep Naive as a strong benchmark baseline and explicitly state that “baseline is strong”.
-- Keep SARIMAX as an “advanced attempt”, but it needs parameter tuning and/or exogenous variables (event/holiday/promo flags) to outperform the baseline.
+- Keep SARIMA as an “advanced attempt”, but it needs parameter tuning and/or exogenous variables (event/holiday/promo flags) to outperform the baseline.
 
 5.10 Forecast 60 days
 
@@ -742,7 +744,19 @@ plt.legend()
   + Capacity planning for warehouse and delivery based on baseline demand.
 - For upcoming campaigns, use scenario planning (Base / Promo / Peak) instead of relying on a single forecast line.
 
-## 6. Conclusion
+## 6. Hypotheses
+- Q4 revenue increases due to seasonal shopping.
+- Longer delivery time reduces review score.
+- A few categories generate most revenue (Pareto).
+- Customers shop more on weekdays.
+
+## 7. Key Insights
+- Revenue is seasonal and weekday-driven
+- Category concentration is high
+- Delivery performance affects satisfaction
+- Forecasting supports planning
+
+## 8. Conclusion
 
 **Inventory**
 - Increase stock 10–20% for top categories before Q4
@@ -760,7 +774,7 @@ plt.legend()
 - Prioritize sellers with faster lead times
 - Consider fulfillment centers closer to customer cluster
 
-## 7. Limitations & Future Work
+## 9. Limitations & Future Work
 
 **Limitations:**
 - Data timeframe (2016–2018): findings may not reflect current market behavior, pricing, competition, or platform dynamics.
@@ -780,7 +794,7 @@ plt.legend()
 - Customer & cohort insights (optional): segment customers by frequency/value and evaluate retention impact from delivery performance and review outcomes.
 - Apply time-series cross-validation to reduce bias from a single train–test split and to better assess model stability across different forecast windows (e.g., 7/14/30/60 days).
 
-## 8. Tools & Libraries
+## 10. Tools & Libraries
 - pandas
 - numpy
 - matplotlib
