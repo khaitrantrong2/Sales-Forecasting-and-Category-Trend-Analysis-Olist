@@ -1,3 +1,6 @@
+<img width="1228" height="1138" alt="image" src="https://github.com/user-attachments/assets/4ad2fcb8-1223-404c-97de-bec2c67135f8" />
+
+
 ## Sales-Forecasting-and-Category-Trend-Analysis-Olist
 This project analyzes the Olist Brazilian E‑commerce dataset to explore sales trends, customer behavior, product categories, and to build a short‑term sales forecast.
 The goal is to support high‑level inventory and marketing planning using historical data.
