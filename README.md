@@ -806,9 +806,6 @@ plt.legend()
 - matplotlib
 - seaborn
 - statsmodels
-- scikit-learn
-- prophet (optional for advanced forecasting)
-Add these to requirements.txt for reproducibility.
 
 **Contact and attribution
 Author - Khai Tran
