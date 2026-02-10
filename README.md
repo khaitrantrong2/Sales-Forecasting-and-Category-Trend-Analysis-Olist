@@ -739,6 +739,9 @@ plt.plot(y.index, y.values, label="History")
 plt.plot(future_index, future_forecast.values, label="60-Day Forecast")
 plt.legend()
 ```
+Result:
+
+<img width="1389" height="490" alt="60-Day Revenue Forecast" src="https://github.com/user-attachments/assets/667179ce-0227-4da9-b0d4-cc951b8e6d30" />
 
 **Assessment:**
 - The 60-day forecast suggests relatively stable expected revenue without major spikes (unless a campaign/event occurs).
